@@ -11,6 +11,11 @@
     lib/CVw32CapScr.lib
     include/CVw32CaptureScreen.h
 
+  with CVDXVCapScr.dll compile from https://github.com/nomissbowling/RainbowArc
+    bin/CVDXVCapScr.dll
+    lib/CVDXVCapScr.lib
+    include/CVDXVCaptureScreen.h
+
   use Microsoft Visual Studio 2017
   x64 compiler/linker
   "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\Hostx64\x64\cl.exe"
@@ -24,7 +29,7 @@
    /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\lib\x64"
    /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17763.0\ucrt\x64"
    /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17763.0\um\x64"
-   opencv_world3412.lib CVw32CapScr.lib
+   opencv_world3412.lib CVw32CapScr.lib CVDXVCapScr.lib
 
   del ..\bin\AFewCam.obj
   AFewCam
@@ -34,6 +39,8 @@
 
 #include <CVw32CaptureScreen.h>
 using namespace cvw32capturescreen;
+#include <CVDXVCaptureScreen.h>
+using namespace cvdxvcapturescreen;
 using namespace std;
 
 namespace afewcam {
@@ -49,9 +56,18 @@ string test_capscr(int ac, char **av)
   cv::VideoCapture cap(cv::CAP_DSHOW + cam_id); // use DirectShow
   if(!cap.isOpened()) return "error: open camera";
   // cout << cv::getBuildInformation() << endl;
+#if 1
+  cout << hex << setw(8) << setfill('0')
+    << (unsigned long)cap.get(cv::CAP_PROP_FOURCC) << endl; // e436eb7d ? 2YUY
+  cout << cap.get(cv::CAP_PROP_FRAME_WIDTH) << endl;
+  cout << cap.get(cv::CAP_PROP_FRAME_HEIGHT) << endl;
+  cout << cap.get(cv::CAP_PROP_FPS) << endl;
+#endif
+#if 1
   if(!cap.set(cv::CAP_PROP_FRAME_WIDTH, width)) cout << "width err" << endl;
   if(!cap.set(cv::CAP_PROP_FRAME_HEIGHT, height)) cout << "height err" << endl;
   if(!cap.set(cv::CAP_PROP_FPS, fps)) cout << "fps err" << endl;
+#endif
   // fourcc = cv::VideoWriter::fourcc('M', 'J', 'P', 'G');
   // fourcc = cv::VideoWriter::fourcc('m', 'p', '4', 'v');
   // fourcc = cv::VideoWriter::fourcc('X', 'V', 'I', 'D');
@@ -61,13 +77,17 @@ string test_capscr(int ac, char **av)
   bool col = true;
   cv::VideoWriter wr("AFewCam.mp4", fourcc, fps, cv::Size(width, height), col);
   CVtickFPS tfps(10);
-  cv::Mat frm;
+  cv::Mat frm, vc1, vc2;
 #if 0
   while(cap.read(frm)){
 #else // fake input from screen
   CVw32CapScr cvw32cs(cv::Rect(960, 512, 320, 240));
+  CVDXVCapScr cvdxvcs1(1);
+  CVDXVCapScr cvdxvcs2(2);
   while(true){
     frm = cvw32cs.cap(cv::Size(width, height));
+    vc1 = cvdxvcs1.cap(cv::Size(width, height));
+    vc2 = cvdxvcs2.cap(cv::Size(width, height));
 #endif
     int cnt = tfps.getCnt();
     tfps.update();
@@ -76,6 +96,8 @@ string test_capscr(int ac, char **av)
     drawCircularROI(frm, ct, 32, cv::Vec3b(32, 192, 240));
     drawCircularROI(frm, cv::Point(320, 240), 8, cv::Vec3b(240, 32, 192));
     cv::imshow(wn[0], frm);
+    cv::imshow(wn[1], vc1);
+    cv::imshow(wn[2], vc2);
     cv::Mat im = pinp(cap, frm);
     wr << im;
     cv::imshow(wn[3], im);
@@ -92,9 +114,24 @@ string test_capscr(int ac, char **av)
 
 }
 
+using namespace afewcam;
+
 int main(int ac, char **av)
 {
-  fprintf(stdout, "sizeof(size_t): %zu\n", sizeof(size_t));
-  cout << afewcam::test_capscr(ac, av) << endl;
+  cout << fmt("sizeof(size_t): %zu", sizeof(size_t)) << endl;
+  cout << test_capscr(ac, av) << endl;
+
+  vector<char> buf({0x41, 0x42, 0x20, 0x43});
+  stringstream ss;
+  ss.write(&buf[0], buf.size());
+#if 0
+  cout << ss.str().c_str();
+#else
+  while(!ss.eof()){
+    string s;
+    ss >> s;
+    cout << s << endl;
+  }
+#endif
   return 0;
 }
