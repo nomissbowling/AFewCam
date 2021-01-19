@@ -77,16 +77,16 @@ string test_capscr(int ac, char **av)
   bool col = true;
   cv::VideoWriter wr("AFewCam.mp4", fourcc, fps, cv::Size(width, height), col);
   CVtickFPS tfps(10);
-  cv::Mat frm, vc1, vc2;
+  cv::Mat frm, vc3, vc2;
 #if 0
   while(cap.read(frm)){
 #else // fake input from screen
   CVw32CapScr cvw32cs(cv::Rect(960, 512, 320, 240));
-  CVDXVCapScr cvdxvcs1(1);
+  CVDXVCapScr cvdxvcs3(3);
   CVDXVCapScr cvdxvcs2(2);
   while(true){
     frm = cvw32cs.cap(cv::Size(width, height));
-    vc1 = cvdxvcs1.cap(cv::Size(width, height));
+    vc3 = cvdxvcs3.cap(cv::Size(width, height));
     vc2 = cvdxvcs2.cap(cv::Size(width, height));
 #endif
     int cnt = tfps.getCnt();
@@ -96,7 +96,7 @@ string test_capscr(int ac, char **av)
     drawCircularROI(frm, ct, 32, cv::Vec3b(32, 192, 240));
     drawCircularROI(frm, cv::Point(320, 240), 8, cv::Vec3b(240, 32, 192));
     cv::imshow(wn[0], frm);
-    cv::imshow(wn[1], vc1);
+    cv::imshow(wn[1], vc3);
     cv::imshow(wn[2], vc2);
     cv::Mat im = pinp(cap, frm);
     wr << im;
