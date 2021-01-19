@@ -17,8 +17,8 @@ requirements
 reference
 ---------
 
-- [DX SDK 2010-10 full 599,452,800](SDK_DirectX9-11_DXSDK_Jun10.exe)
-- [DX SDK 2010-10 redist 100,271,992](DirectX90c_directx_Jun2010_redist.exe)
+- [DX SDK 2010-06 full 599,452,800](SDK_DirectX9-11_DXSDK_Jun10.exe)
+- [DX SDK 2010-06 redist 100,271,992](DirectX90c_directx_Jun2010_redist.exe)
 - [DirectShow](https://qiita.com/tomoki0sanaki/items/fec5cb057b9872c0664c)
 - [Qiita HexagramNM](https://qiita.com/HexagramNM/items/2311f025f3af758c83a0)
 - [NMVCamFilter](https://github.com/HexagramNM/NMVCamFilter)
