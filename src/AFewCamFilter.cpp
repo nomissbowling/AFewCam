@@ -210,7 +210,7 @@ HRESULT CAFewCamSrc::QueryInterface(REFIID riid, void **ppv)
 
 CPushPin::CPushPin(HRESULT *phr, CAFewCamSrc *pFilter) :
   CSourceStream(NAME("CPushPin"), phr, pFilter, OUTPUT_PIN_NAME),
-  m_pFilter(pFilter), m_Count(0), m_rtFrameLength(666666), // 100 nanosec 15fps
+  m_pFilter(pFilter), m_Count(0), m_rtFrameLength(333333), // 100 nanosec 30fps
   m_BmpData(NULL), m_Bitmap(NULL), m_Hdc(NULL)
 {
   GetMediaType(&m_mt);
