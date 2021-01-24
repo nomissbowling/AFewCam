@@ -33,6 +33,26 @@
 
   del ..\bin\AFewCam.obj
   AFewCam
+------------------------------------------------------------------------
+  for DebugPringOut (OpenCV)
+    set OPENCV_DSHOW_SAVEGRAPH_FILENAME=_filter.grf
+    set OPENCV_DSHOW_DEBUG=1
+    compile with -DDEBUG
+    link with opencv_world3412d.lib
+    execute with opencv_world3412d.dll
+------------------------------------------------------------------------
+  x- [Video] USB_Camera [Capture] - [Input] Smart Tee [Capture] -x
+                   [Static Image] -x                  [Preview] ->
+
+  >- [XForm In] AVI Decompressor [XForm Out] ->
+
+  >- [Input] Sample Grabber [Output] - [In] NullRenderer
+------------------------------------------------------------------------
+             DXSDK_Filter [OutPIN] - [Input] Smart Tee [Capture] -x
+                                                       [Preview] ->
+
+  >- [Input] Sample Grabber [Output] - [In] NullRenderer
+------------------------------------------------------------------------
 */
 
 #include "AFewCam.h"
